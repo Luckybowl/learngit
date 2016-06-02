@@ -1,0 +1,203 @@
+#include<iostream>
+#include<stdlib.h>
+#define maxsize 10000
+using namespace std;
+class List
+{
+public:
+    int data[maxsize];                 //原理上不应该为public
+    int last;
+public:
+    List();   //构造函数
+    ~List();             //析构函数
+    void Create();
+    void Insert(int i,int x);
+    void Delete(int i,int &x); //用引用的方式带回x
+    int Length();
+    int Search(int x);
+    int GetData(int i);
+    bool IsEmpty();
+    void PrintList();
+    void Union(List a,List b);
+    void Common(List a,List b);
+    void Order(List a,List b);
+
+};
+
+List::List()
+{
+    last=-1;
+}
+
+List::~List()
+{
+
+}
+void List::Create()
+{
+    last=-1;
+}
+void List::Insert(int i,int x)
+{
+    if(i<1||i>maxsize)
+    {
+        cout<<"Error"<<endl;
+        exit(1);
+    }
+    else
+    {
+        if(last==maxsize-1)
+        {
+            cout<<"Error!! The List Is Full."<<endl;
+            exit(1);
+        }
+        else
+        {
+            for(int j=last;j>=i-1;j--)
+            {
+                data[j+1]=data[j];
+            }
+            data[i-1]=x;
+            last++;
+        }
+    }
+}
+
+void List::Delete(int i,int &x)
+{
+    if(i<1||i>maxsize)
+    {
+        cout<<"Error"<<endl;
+        exit(1);
+    }
+    else
+    {
+        x=data[i-1];
+        for(int j=i-1;j<last;j++)
+        {
+            data[j]=data[j+1];
+        }
+        last--;
+    }
+}
+int List::Length()
+{
+    return last+1;
+}
+
+int List::Search(int x)
+{
+    int flag=1;
+    for(int i=0;i<=last;i++)    //认为仅有一个与x相同的元素。
+    {
+        if(data[i]==x)
+        {
+            flag=0;
+            return i+1;
+        }
+    }
+    if(flag)
+    {
+        return -1;
+    }
+}
+int List::GetData(int i)
+{
+    return data[i-1];
+}
+bool List::IsEmpty()
+{
+    if(last==-1)    return true;
+    else            return false;
+}
+
+void List::PrintList()
+{
+    for(int i=0;i<=last;i++)
+    {
+        cout<<data[i]<<' ';
+    }
+    cout<<endl;
+}
+
+void List::Union(List a,List b)
+{
+    for(int i=0;i<=a.last;i++)
+    {
+        data[i]=a.data[i];
+        last++;
+    }
+    for(int i=0;i<=b.last;i++)
+    {
+        if(Search(b.data[i])==-1)
+        {
+            Insert(1,b.data[i]);
+            i++;
+        }
+    }
+}
+void List::Common(List a,List b)
+{
+    for(int i=0;i<=a.last;i++)
+    {
+        if(b.Search(a.data[i])!=-1)
+        {
+            Insert(1,a.data[i]);
+        }
+    }
+}
+
+void List::Order(List a,List b)
+{
+    int i=0,j=0,k=0;
+    while(i<=a.last||j<=b.last)
+    {
+        if(i<=a.last&&j<=b.last)
+        {
+            if(a.data[i]>b.data[j])
+            {
+                data[k]=b.data[j];
+                k++;
+                j++;
+            }
+            else
+            {
+                data[k]=a.data[i];
+                k++;
+                i++;
+            }
+        }
+        else if(i>a.last&&j<=b.last)
+        {
+            data[k]=b.data[j];
+            k++;j++;
+        }
+        else if(i<=a.last&&j>b.last)
+        {
+            data[k]=a.data[i];
+            k++;i++;
+        }
+        last++;
+    }
+}
+int main()
+{
+    List l,a,b;
+    int x;                      //要删除的元素。
+    for(int i=0;i<=5;i++)
+    {
+        a.data[i]=i;
+        a.last++;
+    }
+    for(int i=0;i<=5;i++)
+    {
+        b.data[i]=i*2;
+        b.last++;
+    }
+    a.PrintList();
+    b.PrintList();
+    l.Order(a,b);
+    l.PrintList();
+    return 0;
+
+}
